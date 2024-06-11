@@ -6,7 +6,16 @@ Implementation in python of my thesis work in unsupervised pre-training using te
 1. Clone the repository to your local machine.
 2. Create a virtual environment (recommended, not necessary).
 2. Install the required packages with: `pip3 install -r requirements.txt`
-3. Create a directory for the raw ECG files.
+3. Create a directory for the raw ECG files. The data generation scripts look for the raw data in this structure:
+    ```
+    ../
+    └───physionet
+    │   └───cpsc
+    │   └───incart
+    │   └───ptbxl
+    │   └───mitbih
+    │   └───g12ec
+    ```
 4. Download the raw ECG files as a zip from physionet.org (recommended) or execute the following commands:.
     - MIT-BIH: `wget -r -N -c -np https://physionet.org/files/mitdb/1.0.0/`.
     - INCART: `wget -r -N -c -np https://physionet.org/files/incartdb/1.0.0/`.
