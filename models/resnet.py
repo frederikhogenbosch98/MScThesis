@@ -107,4 +107,36 @@ class ResNet(nn.Module):
         x = self.upconv1(x)
         return x
     
-        
+
+class ClassifierResNet(nn.Module):
+    def __init__(self, autoencoder, in_features, out_features):
+        super(ClassifierResNet, self).__init__()
+        self.conv1 = autoencoder.conv1
+        self.pool1 = autoencoder.maxpool
+        self.downlayer0 = autoencoder.downlayer0
+        self.downlayer1 = autoencoder.downlayer1
+        self.downlayer2 = autoencoder.downlayer2
+        self.downlayer3 = autoencoder.downlayer3
+
+        self.flatten = nn.Flatten()
+        self.norm = nn.LayerNorm(in_features, eps=1e-6) 
+
+        self.classifier = nn.Sequential(
+                nn.Linear(32768, 256),
+                nn.GELU(),
+                nn.BatchNorm1d(num_features=256),
+                nn.Dropout(0.5),
+                nn.Linear(256, out_features)
+        )
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.pool1(x)
+        x = self.downlayer0(x)
+        x = self.downlayer1(x)
+        x = self.pool1(x)
+        x = self.downlayer2(x)
+        x = self.downlayer3(x)
+        x = self.flatten(x)
+        x = self.classifier(x)
+        return x

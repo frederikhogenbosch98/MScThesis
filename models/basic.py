@@ -104,9 +104,9 @@ class Basic(nn.Module):
         x = self.decoder(x)
         return x
 
-class Classifier_UN(nn.Module):
+class Classifier_Basic(nn.Module):
     def __init__(self, autoencoder, in_features, out_features):
-        super(Classifier_UN, self).__init__()
+        super(Classifier_Basic, self).__init__()
         self.encoder = autoencoder.encoder
         self.flatten = nn.Flatten(start_dim=1)
         self.classifier = nn.Sequential(
@@ -118,7 +118,6 @@ class Classifier_UN(nn.Module):
         )
         
         self.lastlin = nn.Linear(256, out_features)
-        self.reallylastlin = nn.Linear(64+1, out_features)
 
 
     def forward(self, x):
@@ -127,5 +126,4 @@ class Classifier_UN(nn.Module):
         x = self.classifier(x)
         
         return x
-
 
