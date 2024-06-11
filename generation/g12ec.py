@@ -17,7 +17,7 @@ import cv2
 import tqdm
 from scipy.io import loadmat
 
-physio_root = '../physionet/g12ec/WFDB/' # root
+physio_root = '../physionet/g12ec/' # root
 _dataset_dir = 'data/georgia/class' # output folder
 
 def butter_bandpass(lowcut, highcut, fs, order=5):

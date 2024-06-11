@@ -15,7 +15,7 @@ import argparse
 import cv2
 import tqdm
 
-physio_root = '../physionet/ptbxl/records500' # ptbxl files location
+physio_root = '../physionet/ptbxl/' # ptbxl files location
 _dataset_dir = 'data/ptbxl/class' # output folder
 
 def butter_bandpass(lowcut, highcut, fs, order=5):

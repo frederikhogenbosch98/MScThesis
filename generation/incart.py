@@ -18,8 +18,8 @@ from PIL import Image
 import io
 
 _range_to_ignore = 30
-_directory = '../physionet/incart/files/' # incart files location
-_dataset_dir = 'data/physionet/incartdb/render/imgs' # output folder
+_directory = '../physionet/incart/' # incart files location
+_dataset_dir = 'data/incart/' # output folder
 
 
 
