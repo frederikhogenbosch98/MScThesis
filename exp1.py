@@ -14,7 +14,7 @@ from torchvision import datasets, transforms
 
 from models.basic import Basic, Classifier_Basic
 from models.basic_CPD import Basic_CPD
-from models.resnet import ResNet
+from models.resnet import ResNet, ClassifierResNet
 from models.convnext import ConvNext
 from models.unet import UNet, ClassifierUnet
 
@@ -78,7 +78,6 @@ if __name__ == "__main__":
     parser = get_args_parser()
     args = parser.parse_args()
 
-    dtype = torch.float32
     device_ids = [0, 2, 3]
     main_device = device_ids[0]
     if torch.cuda.is_available():
@@ -99,24 +98,24 @@ if __name__ == "__main__":
 
 
     # UNLABELED
-    ptbxl_dir = 'data/physionet/ptbxl/'
+    ptbxl_dir = 'data/ptbxl/'
     ptbxl_dataset = datasets.ImageFolder(root=ptbxl_dir, transform=transform)
-    georgia_dir = 'data/physionet/georgia/'
-    georgia_dataset = datasets.ImageFolder(root=georgia_dir, transform=transform)
-    china_dir = 'data/physionet/china/'
-    china_dataset = datasets.ImageFolder(root=china_dir, transform=transform)
-    combined_unsupervised_train = torch.utils.data.ConcatDataset([ptbxl_dataset, georgia_dataset, china_dataset])
+    g12ec_dir = 'data/g12ec/'
+    g12ec_dataset = datasets.ImageFolder(root=g12ec_dir, transform=transform)
+    cpsc_dir = 'data/cpsc/'
+    cpsc_dataset = datasets.ImageFolder(root=cpsc_dir, transform=transform)
+    combined_unsupervised_train = torch.utils.data.ConcatDataset([ptbxl_dataset, g12ec_dataset, cpsc_dataset])
     trainset_un, testset_un, valset_un = torch.utils.data.random_split(combined_unsupervised_train, [190000, 25000, 17077])
 
     # LABELED
-    mitbih_ds11_dir = 'data/physionet/mitbih/DS11/'
-    mitbih_ds12_dir = 'data/physionet/mitbih/DS12/'
-    mitbih_ds2_dir = 'data/physionet/mitbih/DS2/'
+    mitbih_ds11_dir = 'data/mitbih/DS11/'
+    mitbih_ds12_dir = 'data/mitbih/DS12/'
+    mitbih_ds2_dir = 'data/mitbih/DS2/'
     mitbih_dataset_train = datasets.ImageFolder(root=mitbih_ds11_dir, transform=transform)
     mitbih_dataset_val = datasets.ImageFolder(root=mitbih_ds12_dir, transform=transform)
     mitbih_dataset_test = datasets.ImageFolder(root=mitbih_ds2_dir, transform=transform) 
 
-    incartdb_dir = 'data/physionet/incartdb/'
+    incartdb_dir = 'data/incartdb/'
     incartdb_dataset = datasets.ImageFolder(root=incartdb_dir, transform=transform)
 
     trainset_sup = torch.utils.data.ConcatDataset([mitbih_dataset_train, incartdb_dataset])
@@ -139,13 +138,14 @@ if __name__ == "__main__":
     class_losses_run = np.zeros((4, num_epochs_classifier))
     class_val_losses_run = np.zeros((4, num_epochs_classifier))
 
-    models = [Basic(channels=[32, 64, 128, 256]), ConvNext() ,UNet(), ResNet()]
+    models = [Basic(channels=[32, 64, 128, 256]), ConvNext(), UNet(), ResNet()]
 
     model_strs = ['basic', 'unet', 'resnet', 'convnext'] 
     lr = [5e-5, 1e-4, 1e-4, 1e-4]
 
     CLASSIFY = True
     NUM_RUNS = args.num_runs
+    NUM_CLASSES = 5
 
     now = datetime.now()
     run_dir = f'trained_models/model_comparison/RUN_{now.day}_{now.month}_{now.hour}_{now.minute}_Basic'
@@ -174,20 +174,20 @@ if __name__ == "__main__":
                                                         device = device,
                                                         step_size=15)
             
-            mae_losses_run[i,:] = mae_losses
-            mae_val_losses_run[i,:] = mae_val_losses
-            train_save_folder = f'{run_dir}/{model_strs[i]}/{j}/MAE_losses_train.npy'
-            val_save_folder = f'{run_dir}/{model_strs[i]}/{j}/MAE_losses_{model_strs[i]}_val.npy'
-            np.save(train_save_folder, mae_losses)
-            np.save(val_save_folder, mae_val_losses)
 
-            mses.append(eval_mae(mae, testset_un, R=0, device=device))
+            eval_mae(mae, testset_un, R=0, device=device)
 
             if CLASSIFY:
-                num_classes = 5
                 if args.model == 'default':
-                    classifier = Classifier_Basic(autoencoder=mae.module, in_features=2048, out_features=num_classes)
-                    # classifier = ClassifierUnet(autoencoder=mae.module, in_features=2048, out_features=num_classes)
+                    if model_strs[i] == 'basic' or model_strs[i] == 'convnext':
+                        classifier = Classifier_Basic(autoencoder=mae.module, out_features=NUM_CLASSES)
+                    elif model_strs[i] == 'resnet':
+                        classifier = ClassifierResNet(autoencoder=mae.module, out_features=NUM_CLASSES)
+                    elif model_strs[i] == 'unet':
+                        classifier = ClassifierUnet(autoencoder=mae.module, out_features=NUM_CLASSES)
+                    else:
+                        raise ValueError('Model not recognized')
+
                 if args.gpu == 'all':
                     classifier = nn.DataParallel(classifier, device_ids=device_ids).to(device) 
 
@@ -208,11 +208,9 @@ if __name__ == "__main__":
                                             device = device,
                                             testset=testset_sup)
                                             
-                accuracy = eval_classifier(classifier, testset_sup, device=device)
-        mega_mses.append(np.mean(mses))
+                eval_classifier(classifier, testset_sup, device=device)
 
 
-    print(mega_mses)
 
     
 
