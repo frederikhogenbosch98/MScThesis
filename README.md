@@ -1,20 +1,20 @@
 # Tensor Decompositions in Autoencoders for Electrocardiography Classification
 Implementation in python of my thesis work in unsupervised pre-training using tensor decomposed autoencoders for ECG classification.
 
-
-### Installation
+Thesis can be found at: repository.tudelft.nl
+### Getting started
 1. Clone the repository to your local machine.
 2. Create a virtual environment (recommended, not necessary).
 2. Install the required packages with: `pip3 install -r requirements.txt`
-3. Create a directory for the raw ECG files. The data generation scripts look for the raw data in this structure:
+3. Create directories for the raw ECG files. The data generation scripts look for the raw data in this structure:
     ```
     ../
     └───physionet
-    │   └───cpsc
-    │   └───incart
-    │   └───ptbxl
-    │   └───mitbih
-    │   └───g12ec
+    │   └───cpsc/
+    │   └───incart/
+    │   └───ptbxl/
+    │   └───mitbih/
+    │   └───g12ec/
     ```
 4. Download the raw ECG files as a zip from physionet.org (recommended) or execute the following commands:.
     - MIT-BIH: `wget -r -N -c -np https://physionet.org/files/mitdb/1.0.0/`.
@@ -22,9 +22,18 @@ Implementation in python of my thesis work in unsupervised pre-training using te
     - PTB-XL: `wget -r -N -c -np https://physionet.org/files/ptb-xl/1.0.3/`.
     - CPSC: `wget -r -N -c -np https://physionet.org/files/cpsc2021/1.0.0/`.
     - G12EC has to be downloaded directly at: https://www.kaggle.com/datasets/bjoernjostein/georgia-12lead-ecg-challenge-database?resource=download.
+5. Create a `data/` directory at the root of the project.
 5. Run each of the data generation files under `generation/`. Ensure the correct directories are set at the top of each of the files.
 
-### Usage
+### Models
+This thesis contains five different models:
+- ResNet autoencoder
+- ConvNeXt autoencoder
+- U-Net
+- Basic autoencoder
+- CPD Basic autoencoder
+
+### Running the experiments
 To run the experiment execute the four corresponding files: `exp1.py`, `exp2_1.py`, `exp2_2.py` and `exp2_3.py`.
 Each of the experiments can be run with the following arguments:
 
