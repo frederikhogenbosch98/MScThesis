@@ -133,11 +133,6 @@ if __name__ == "__main__":
     num_warmup_epochs_classifier = args.warmup_epochs_class
     num_epochs_classifier = args.epochs_class + num_warmup_epochs_classifier
 
-    mae_losses_run = np.zeros((4, num_epochs_mae))
-    mae_val_losses_run = np.zeros((4, num_epochs_mae))
-    class_losses_run = np.zeros((4, num_epochs_classifier))
-    class_val_losses_run = np.zeros((4, num_epochs_classifier))
-
     models = [Basic(channels=[32, 64, 128, 256]), ConvNext(), UNet(), ResNet()]
 
     model_strs = ['basic', 'unet', 'resnet', 'convnext'] 

@@ -13,44 +13,39 @@ Implementation in python of my thesis work in unsupervised pre-training using te
     - PTB-XL: `wget -r -N -c -np https://physionet.org/files/ptb-xl/1.0.3/`.
     - CPSC: `wget -r -N -c -np https://physionet.org/files/cpsc2021/1.0.0/`.
     - G12EC has to be downloaded directly at: https://www.kaggle.com/datasets/bjoernjostein/georgia-12lead-ecg-challenge-database?resource=download.
-5. Run each of the data generation files under `generation/`.
+5. Run each of the data generation files under `generation/`. Ensure the correct directories are set at the top of each of the files.
 
 ### Usage
 To run the experiment execute the four corresponding files: `exp1.py`, `exp2_1.py`, `exp2_2.py` and `exp2_3.py`.
+Each of the experiments can be run with the following arguments:
 
-#### Arguments
-##### Model parameters
-- --model: Name of model to train (default: default)
-- --batch_size_mae: Per GPU batch size (default: 256)
-- --epochs_mae: Number of epochs to train the MAE (default: 50)
-- --warmup_epochs_mae: Number of epochs to warmup LR for MAE (default: 0)
-- --num_runs: Number of repeat runs (default: 3)
-- --batch_size_class: Per GPU batch size for classifier (default: 256)
-- --epochs_class: Number of epochs to train the classifier (default: 20)
-- --warmup_epochs_class: Number of epochs to warmup LR for classifier (default: 0)
+| Parameter                 | Description                                          | Default | type |
+|---------------------------|------------------------------------------------------|---------|------|
+| `--model`                 | Name of model to train                               | default | str |
+| `--num_runs`              | Number of repeat runs                                | 3       |int|
+| `--batch_size_mae`        | Per GPU batch size                                   | 256     |int|
+| `--epochs_mae`            | Number of epochs to train the autoencoder            | 50      |int|
+| `--warmup_epochs_mae`     | Number of epochs to warmup LR for autoencoder        | 0       |int|
+| `--batch_size_class`      | Per GPU batch size for classifier                    | 256     |int|
+| `--epochs_class`          | Number of epochs to train the classifier             | 20      |int|
+| `--warmup_epochs_class`   | Number of epochs to warmup LR for classifier         | 0       |int|
+| `--weight_decay_mae`      | Weight decay for autoencoder                         | 1e-4    |int|
+| `--lr_mae`                | Learning rate for autoencoder                        | 5e-4    |int|
+| `--min_lr_mae`            | Lower LR bound for cyclic schedulers for autoencoder | 1e-5    |int|
+| `--weight_decay_class`    | Weight decay for classifier                          | 1e-4    |int|
+| `--lr_class`              | Learning rate for classifier                         | 5e-4    |int|
+| `--min_lr_class`          | Lower LR bound for cyclic schedulers for classifier  | 1e-5    |int|
+| `--gpu`                   | Specify to use single GPU or all GPUs                | all     |str|
 
-##### Optimizer parameters
-- --weight_decay_mae: Weight decay for MAE (default: 1e-4)
-- --lr_mae: Learning rate for MAE (default: 5e-4)
-- --min_lr_mae: Lower LR bound for cyclic schedulers for MAE (default: 1e-5)
-- --weight_decay_class: Weight decay for classifier (default: 1e-4)
-- --lr_class: Learning rate for classifier (default: 5e-4)
-- --min_lr_class: Lower LR bound for cyclic schedulers for classifier (default: 1e-5)
+#### Flags
 
-##### Other parameters
-- --gpu: Specify to use single GPU or all GPUs (default: all)
-
-##### Save parameters
-- --contrun: Flag to continue from last run
-- --no_train_mae: Do not train MAE
-- --no_train_class: Do not train classifier
-- --no_save_mae: Do not save MAE model
-- --no_save_class: Do not save classifier model
-
-
-### Results
+| Parameter          | Description                           |
+|--------------------|---------------------------------------|
+| `--contrun`        | Flag to continue from last run        |
+| `--no_train_mae`   | Do not train autoencoder              |
+| `--no_train_class` | Do not train classifier               |
+| `--no_save_mae`    | Do not save autoencoder model         |
+| `--no_save_class`  | Do not save classifier model          |
 
 
-
-
-### Abstract
+To reconstruct images use the function `reconstruct_img` in `nn_funcs.py`.
