@@ -66,6 +66,9 @@ def averaging(segments):
 
 
 def create_input_tensor():
+
+    if not os.path.exists(_dataset_dir):
+        os.makedirs(_dataset_dir)
     print(f'creating datasets')
 
     low_cut = 0.1

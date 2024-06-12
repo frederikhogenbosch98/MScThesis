@@ -24,8 +24,8 @@ _dataset_dir = '/data/mitbih/' # output folder
 
 def create_img_from_sign(lblabels, lbrevert_labels, lboriginal_labels, size=(224, 224), augmentation=True):
 
-    if not os.path.exists(_directory):
-        os.makedirs(_directory)
+    if not os.path.exists(_dataset_dir):
+        os.makedirs(_dataset_dir)
 
     files = [f[:-4] for f in listdir(_directory) if isfile(join(_directory, f)) if (f.find('.dat') != -1)]
     to_remove = ['104', '102', '107', '217']
