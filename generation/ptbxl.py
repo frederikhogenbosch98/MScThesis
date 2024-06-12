@@ -16,7 +16,7 @@ import cv2
 import tqdm
 
 physio_root = '../physionet/ptbxl/' # ptbxl files location
-_dataset_dir = '/data/ptbxl/class' # output folder
+_dataset_dir = 'data/ptbxl/class' # output folder
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs

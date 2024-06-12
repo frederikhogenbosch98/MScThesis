@@ -18,7 +18,7 @@ import tqdm
 from scipy.io import loadmat
 
 physio_root = '../physionet/cpsc/' # root folder raw files
-_dataset_dir = '/data/cpsc/class' # output folder
+_dataset_dir = 'data/cpsc/class' # output folder
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
