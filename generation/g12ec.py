@@ -115,7 +115,6 @@ def create_input_tensor():
             buf = create_img(segs[i], 224, 224)
             image_pil = Image.open(buf)
             image_cv = cv2.cvtColor(np.array(image_pil), cv2.COLOR_RGB2GRAY)
-            print(filename)
             cv2.imwrite(filename, image_cv)
             plt.cla()
             plt.clf()
