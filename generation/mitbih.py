@@ -18,7 +18,7 @@ import io
 
 _range_to_ignore = 30
 _directory = '../physionet/mitbih/' # set this to download folder of mitbih file
-_dataset_dir = '/data/physionet/mitbih/' # output folder
+_dataset_dir = '/data/mitbih/' # output folder
 
 
 

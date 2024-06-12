@@ -18,7 +18,7 @@ from models.resnet import ResNet, ClassifierResNet
 from models.convnext import ConvNext
 from models.unet import UNet, ClassifierUnet
 
-from utils.print_funs import plot_losses, plotimg, plot_single_img, count_parameters
+from utils.print_funcs import plot_losses, plotimg, plot_single_img, count_parameters
 from nn_funcs import CosineAnnealingwithWarmUp, EarlyStopper, train_mae, train_classifier, eval_mae, eval_classifier
 
 
