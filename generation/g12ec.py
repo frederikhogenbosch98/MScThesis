@@ -18,7 +18,7 @@ import tqdm
 from scipy.io import loadmat
 
 physio_root = '../physionet/g12ec/' # root
-_dataset_dir = '/data/georgia/class' # output folder
+_dataset_dir = '/data/g12ec/class' # output folder
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
@@ -111,6 +111,7 @@ def create_input_tensor():
             buf = create_img(segs[i], 224, 224)
             image_pil = Image.open(buf)
             image_cv = cv2.cvtColor(np.array(image_pil), cv2.COLOR_RGB2GRAY)
+            print(filename)
             cv2.imwrite(filename, image_cv)
             plt.cla()
             plt.clf()
