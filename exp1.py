@@ -139,7 +139,7 @@ if __name__ == "__main__":
     model_strs = ['basic', 'unet', 'resnet', 'convnext'] 
     lr = [5e-5, 1e-4, 1e-4, 1e-4]
 
-    CLASSIFY = True
+    CLASSIFY = False
     NUM_RUNS = args.num_runs
     NUM_CLASSES = 5
 
