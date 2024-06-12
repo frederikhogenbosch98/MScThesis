@@ -4,9 +4,9 @@ Implementation in python of my thesis work in unsupervised pre-training using te
 Thesis can be found at: repository.tudelft.nl
 ### Getting started
 1. Clone the repository to your local machine.
-2. Create a virtual environment (recommended, not necessary).
-2. Install the required packages with: `pip3 install -r requirements.txt`
-3. Create directories for the raw ECG files. The data generation scripts look for the raw data in this structure:
+2. Create a virtual environment (recommended).
+3. Install the required packages with: `pip3 install -r requirements.txt`
+4. Create directories for the raw ECG files. The data generation scripts look for the raw data in this structure:
     ```
     ../
     └───physionet
@@ -16,14 +16,16 @@ Thesis can be found at: repository.tudelft.nl
     │   └───mitbih/
     │   └───g12ec/
     ```
-4. Download the raw ECG files as a zip from physionet.org (recommended) or execute the following commands:.
+5. Download the raw ECG files as a zip from physionet.org (recommended) or download with `wget`:
     - MIT-BIH: `wget -r -N -c -np https://physionet.org/files/mitdb/1.0.0/`.
     - INCART: `wget -r -N -c -np https://physionet.org/files/incartdb/1.0.0/`.
     - PTB-XL: `wget -r -N -c -np https://physionet.org/files/ptb-xl/1.0.3/`.
     - CPSC: `wget -r -N -c -np https://physionet.org/files/cpsc2021/1.0.0/`.
     - G12EC has to be downloaded directly at: https://www.kaggle.com/datasets/bjoernjostein/georgia-12lead-ecg-challenge-database?resource=download.
-5. Create a `data/` directory at the root of the project.
-5. Run each of the data generation files under `generation/`. Ensure the correct directories are set at the top of each of the files.
+6. Place the `.dat`, `.mat` or `.atr` files from each of these datasets in their corresponding folders from step 4.
+7. Create a `data/` directory at the root of the project.
+8. Run each of the data generation files under `generation/`. Ensure the correct directories are set at the top of each of the files.
+   Example command for MIT-BIH: `python3 generation/mitbih.py`
 
 ### Models
 This thesis contains five different models:

@@ -18,7 +18,7 @@ from models.resnet import ResNet, ClassifierResNet
 from models.convnext import ConvNext
 from models.unet import UNet, ClassifierUnet
 
-from print_funs import plot_losses, plotimg, plot_single_img, count_parameters
+from utils.print_funs import plot_losses, plotimg, plot_single_img, count_parameters
 from nn_funcs import CosineAnnealingwithWarmUp, EarlyStopper, train_mae, train_classifier, eval_mae, eval_classifier
 
 
@@ -132,6 +132,7 @@ if __name__ == "__main__":
     # CLASSIFIER
     num_warmup_epochs_classifier = args.warmup_epochs_class
     num_epochs_classifier = args.epochs_class + num_warmup_epochs_classifier
+
 
     models = [Basic(channels=[32, 64, 128, 256]), ConvNext(), UNet(), ResNet()]
 
