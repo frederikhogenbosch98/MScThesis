@@ -115,7 +115,7 @@ if __name__ == "__main__":
     mitbih_dataset_val = datasets.ImageFolder(root=mitbih_ds12_dir, transform=transform)
     mitbih_dataset_test = datasets.ImageFolder(root=mitbih_ds2_dir, transform=transform) 
 
-    incartdb_dir = 'data/incartdb/'
+    incartdb_dir = 'data/incart/'
     incartdb_dataset = datasets.ImageFolder(root=incartdb_dir, transform=transform)
 
     trainset_sup = torch.utils.data.ConcatDataset([mitbih_dataset_train, incartdb_dataset])
