@@ -152,7 +152,7 @@ def train_mae(model,
     if TRAIN_MAE:
 
         if contrun:
-            model.load_state_dict(torch.load('trained_models/last/last_run.pth'))
+            model.load_state_dict(torch.load('trained_models/last_run.pth'))
 
         criterion = nn.MSELoss() # mean square error loss
 
@@ -218,7 +218,7 @@ def train_mae(model,
 
             if (epoch + 1) % 10 == 0 and epoch != 0 and SAVE_MODEL_MAE:
                 torch.save(model.state_dict(), f'{run_dir}/MAE_RUN_{fact}_R{R}_{now.day}_{now.month}_{now.hour}_{now.minute}_epoch_{epoch+1}.pth')
-                torch.save(model.state_dict(), 'trained_models/last/last_run.pth')
+                torch.save(model.state_dict(), 'trained_models/last_run.pth')
 
             if valset:
                 model.eval()
@@ -255,7 +255,7 @@ def train_mae(model,
         if SAVE_MODEL_MAE:
             save_folder = f'{run_dir}/MAE_RUN_{fact}_R{R}_{now.day}_{now.month}_{now.hour}_{now.minute}.pth'
             torch.save(model.state_dict(), save_folder)
-            torch.save(model.state_dict(), 'trained_models/last/last_run.pth')
+            torch.save(model.state_dict(), 'trained_models/last_run.pth')
             print(f'MAE model saved to {save_folder}')
 
         # plot_losses(epoch+1, losses)        
@@ -263,7 +263,7 @@ def train_mae(model,
 
 
     else:
-        model.load_state_dict(torch.load('trained_models/last/last_run.pth'))
+        model.load_state_dict(torch.load('trained_models/last_run.pth'))
         print(f'dataset loaded')
         losses = np.zeros(num_epochs)
         val_losses = np.zeros(num_epochs)
