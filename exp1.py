@@ -18,7 +18,7 @@ from models.resnet import ResNet, ClassifierResNet
 from models.convnext import ConvNext
 from models.unet import UNet, ClassifierUnet
 
-from utils.print_funcs import plot_losses, plotimg, plot_single_img, count_parameters
+from print_funcs import plot_losses, plotimg, plot_single_img, count_parameters
 from nn_funcs import CosineAnnealingwithWarmUp, EarlyStopper, train_mae, train_classifier, eval_mae, eval_classifier
 
 
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     parser = get_args_parser()
     args = parser.parse_args()
 
-    device_ids = [0, 2, 3]
+    device_ids = [0, 1, 2, 3]
     main_device = device_ids[0]
     if torch.cuda.is_available():
         device = torch.device(f'cuda:{main_device}')
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     num_epochs_classifier = args.epochs_class + num_warmup_epochs_classifier
 
 
-    models = [Basic_32(channels=[32, 64, 128, 256]), ConvNext(), UNet(), ResNet()]
+    models = [Basic_32(channels=[32, 64, 128]), ConvNext(), UNet(), ResNet()]
 
     model_strs = ['basic', 'unet', 'resnet', 'convnext'] 
     lr = [5e-5, 1e-4, 1e-4, 1e-4]
