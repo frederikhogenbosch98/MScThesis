@@ -12,7 +12,7 @@ import torch.nn.functional as F
 
 from torchvision import datasets, transforms
 
-from models.basic import Basic, Classifier_Basic
+from models.basic_32 import Basic_32, Classifier_Basic
 from models.basic_CPD import Basic_CPD
 from models.resnet import ResNet, ClassifierResNet
 from models.convnext import ConvNext
@@ -134,12 +134,12 @@ if __name__ == "__main__":
     num_epochs_classifier = args.epochs_class + num_warmup_epochs_classifier
 
 
-    models = [Basic(channels=[32, 64, 128, 256]), ConvNext(), UNet(), ResNet()]
+    models = [Basic_32(channels=[32, 64, 128, 256]), ConvNext(), UNet(), ResNet()]
 
     model_strs = ['basic', 'unet', 'resnet', 'convnext'] 
     lr = [5e-5, 1e-4, 1e-4, 1e-4]
 
-    CLASSIFY = False
+    CLASSIFY = True
     NUM_RUNS = args.num_runs
     NUM_CLASSES = 5
 
