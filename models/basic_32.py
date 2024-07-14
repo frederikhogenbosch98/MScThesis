@@ -91,7 +91,7 @@ class Classifier_Basic(nn.Module):
         self.encoder = autoencoder.encoder
         self.flatten = nn.Flatten(start_dim=1)
         self.classifier = nn.Sequential(
-                nn.Linear(16*16*256, 256),
+                nn.Linear(16*16*128, 256),
                 nn.GELU(),
                 nn.BatchNorm1d(num_features=256),
                 nn.Dropout(0.5),
