@@ -17,6 +17,7 @@ from PIL import Image
 from sklearn.metrics import confusion_matrix
 import pandas as pd
 from datetime import datetime
+import tqdm
 
 class CosineAnnealingwithWarmUp():
 
