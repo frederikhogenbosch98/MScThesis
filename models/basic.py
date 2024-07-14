@@ -105,7 +105,7 @@ class Basic(nn.Module):
         return x
 
 class Classifier_Basic(nn.Module):
-    def __init__(self, autoencoder, in_features, out_features):
+    def __init__(self, autoencoder, out_features):
         super(Classifier_Basic, self).__init__()
         self.encoder = autoencoder.encoder
         self.flatten = nn.Flatten(start_dim=1)

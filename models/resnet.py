@@ -109,7 +109,7 @@ class ResNet(nn.Module):
     
 
 class ClassifierResNet(nn.Module):
-    def __init__(self, autoencoder, in_features, out_features):
+    def __init__(self, autoencoder, out_features):
         super(ClassifierResNet, self).__init__()
         self.conv1 = autoencoder.conv1
         self.pool1 = autoencoder.maxpool
@@ -119,8 +119,6 @@ class ClassifierResNet(nn.Module):
         self.downlayer3 = autoencoder.downlayer3
 
         self.flatten = nn.Flatten()
-        self.norm = nn.LayerNorm(in_features, eps=1e-6) 
-
         self.classifier = nn.Sequential(
                 nn.Linear(32768, 256),
                 nn.GELU(),
