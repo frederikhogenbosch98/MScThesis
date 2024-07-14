@@ -78,7 +78,7 @@ if __name__ == "__main__":
     parser = get_args_parser()
     args = parser.parse_args()
 
-    device_ids = [0, 1, 2, 3]
+    device_ids = [0, 2, 3]
     main_device = device_ids[0]
     if torch.cuda.is_available():
         device = torch.device(f'cuda:{main_device}')
