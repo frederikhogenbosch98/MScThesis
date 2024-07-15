@@ -122,6 +122,8 @@ if __name__ == "__main__":
     valset_sup = mitbih_dataset_val
     testset_sup = mitbih_dataset_test
 
+    training_supset = trainset_sup
+
     # MAE
     num_warmup_epochs_mae = args.warmup_epochs_mae
     num_epochs_mae = args.epochs_mae + num_warmup_epochs_mae
@@ -132,74 +134,84 @@ if __name__ == "__main__":
 
     NUM_PARAMS_UNCOMPRESSED = 9411649
 
-    R_LIST = [5, 10, 15, 20, 25, 35, 50, 75, 100, 125, 150, 175, 200]
     CLASSIFY = True
     fact = 'cp'
+    R_LIST = [0, 100]
+    ratios = [0.025, 0.05, 0.10, 0.2]
 
     now = datetime.now()
     run_dir = f'trained_models/compressed/RUN_{now.day}_{now.month}_{now.hour}_{now.minute}_high_rank_run'
     os.makedirs(f'{run_dir}/', exist_ok=True)
     for i, R in enumerate(R_LIST):
         print(f'R: {R}')
-        model = Basic_CPD(R=R, factorization='cp')
-        model = nn.DataParallel(model, device_ids=device_ids).to(device)
-        mses = []
-        current_pams = count_parameters(model)
-        print(f'NUM PARAMS: {current_pams}')
-        comp_ratio = NUM_PARAMS_UNCOMPRESSED/current_pams
-        print(f'COMPRESSION RATIO: {comp_ratio}')
+        for r in ratios:
+            print(f'ratio: {r}')
+            un_vals = int(r*190000)
+            un_vals_other = 190000 - un_vals 
+            sup_vals = int(r*200000)
+            sup_vals_other = int(18192 + 200000 - sup_vals)
+            trainset_un, testset_un, valset_un, _ = torch.utils.data.random_split(combined_unsupervised_train, [un_vals, 25000, 17077, un_vals_other])
+            trainset_sup, _ = torch.utils.data.random_split(training_supset, [sup_vals, sup_vals_other])
 
-        for j in range(args.num_runs):
-            os.makedirs(f'{run_dir}/R_{R}/{j}', exist_ok=True)
-            mae, mae_losses, mae_val_losses, epoch_time = train_mae(model=model, 
-                                                        trainset=trainset_un,
-                                                        valset=valset_un,
-                                                        learning_rate=args.lr_mae,
-                                                        min_lr = args.min_lr_mae,
-                                                        weight_decay = args.weight_decay_mae,
-                                                        num_epochs=num_epochs_mae,
-                                                        n_warmup_epochs=num_warmup_epochs_mae,
-                                                        TRAIN_MAE=args.train_mae,
-                                                        SAVE_MODEL_MAE=args.save_mae,
-                                                        R=R,
-                                                        batch_size=args.batch_size_mae,
-                                                        fact=fact,
-                                                        run_dir = run_dir,
-                                                        contrun = args.contrun,
-                                                        device = device,
-                                                        step_size=15)
-            
-            train_save_folder = f'{run_dir}/R_{R}/{j}/MAE_losses_train.npy'
-            val_save_folder = f'{run_dir}/R_{R}/{j}/MAE_losses_val.npy'
-            np.save(train_save_folder, mae_losses)
-            np.save(val_save_folder, mae_val_losses)
+            model = Basic_CPD(R=R, factorization='cp')
+            model = nn.DataParallel(model, device_ids=device_ids).to(device)
+            mses = []
+            current_pams = count_parameters(model)
+            print(f'NUM PARAMS: {current_pams}')
+            comp_ratio = NUM_PARAMS_UNCOMPRESSED/current_pams
+            print(f'COMPRESSION RATIO: {comp_ratio}')
 
-            mses.append(eval_mae(mae, testset_un,R,device=device))
+            for j in range(args.num_runs):
+                os.makedirs(f'{run_dir}/R_{R}/{j}', exist_ok=True)
+                mae, mae_losses, mae_val_losses, epoch_time = train_mae(model=model, 
+                                                            trainset=trainset_un,
+                                                            valset=valset_un,
+                                                            learning_rate=args.lr_mae,
+                                                            min_lr = args.min_lr_mae,
+                                                            weight_decay = args.weight_decay_mae,
+                                                            num_epochs=num_epochs_mae,
+                                                            n_warmup_epochs=num_warmup_epochs_mae,
+                                                            TRAIN_MAE=args.train_mae,
+                                                            SAVE_MODEL_MAE=args.save_mae,
+                                                            R=R,
+                                                            batch_size=args.batch_size_mae,
+                                                            fact=fact,
+                                                            run_dir = run_dir,
+                                                            contrun = args.contrun,
+                                                            device = device,
+                                                            step_size=15)
+                
+                train_save_folder = f'{run_dir}/R_{R}/{j}/MAE_losses_train.npy'
+                val_save_folder = f'{run_dir}/R_{R}/{j}/MAE_losses_val.npy'
+                np.save(train_save_folder, mae_losses)
+                np.save(val_save_folder, mae_val_losses)
+
+                mses.append(eval_mae(mae, testset_un,R,device=device))
 
 
-            if CLASSIFY:
-                num_classes = 5
-                if args.model == 'default':
-                    classifier = Classifier_Basic(autoencoder=mae.module,  out_features=num_classes)
-                if args.gpu == 'all':
-                    classifier = nn.DataParallel(classifier, device_ids=device_ids).to(device) 
+                if CLASSIFY:
+                    num_classes = 5
+                    if args.model == 'default':
+                        classifier = Classifier_Basic(autoencoder=mae.module,  out_features=num_classes)
+                    if args.gpu == 'all':
+                        classifier = nn.DataParallel(classifier, device_ids=device_ids).to(device) 
 
-                classifier, class_losses, class_val_losses = train_classifier(classifier=classifier, 
-                                            trainset=trainset_sup, 
-                                            valset=valset_sup, 
-                                            num_epochs=num_epochs_classifier, 
-                                            n_warmup_epochs=num_warmup_epochs_classifier, 
-                                            learning_rate=args.lr_class,
-                                            min_lr = args.min_lr_class,
-                                            weight_decay = args.weight_decay_class,
-                                            batch_size=args.batch_size_class, 
-                                            TRAIN_CLASSIFIER=args.train_class, 
-                                            SAVE_MODEL_CLASSIFIER=args.save_class,
-                                            R=R,
-                                            fact='cp',
-                                            run_dir = run_dir,
-                                            device = device,
-                                            testset=testset_sup)
+                    classifier, class_losses, class_val_losses = train_classifier(classifier=classifier, 
+                                                trainset=trainset_sup, 
+                                                valset=valset_sup, 
+                                                num_epochs=num_epochs_classifier, 
+                                                n_warmup_epochs=num_warmup_epochs_classifier, 
+                                                learning_rate=args.lr_class,
+                                                min_lr = args.min_lr_class,
+                                                weight_decay = args.weight_decay_class,
+                                                batch_size=args.batch_size_class, 
+                                                TRAIN_CLASSIFIER=args.train_class, 
+                                                SAVE_MODEL_CLASSIFIER=args.save_class,
+                                                R=R,
+                                                fact='cp',
+                                                run_dir = run_dir,
+                                                device = device,
+                                                testset=testset_sup)
 
-                eval_classifier(classifier, testset_sup, device=device)
+                    eval_classifier(classifier, testset_sup, device=device)
                 
