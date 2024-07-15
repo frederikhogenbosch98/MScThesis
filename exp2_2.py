@@ -153,7 +153,14 @@ if __name__ == "__main__":
             trainset_un, testset_un, valset_un, _ = torch.utils.data.random_split(combined_unsupervised_train, [un_vals, 25000, 17077, un_vals_other])
             trainset_sup, _ = torch.utils.data.random_split(training_supset, [sup_vals, sup_vals_other])
 
-            model = Basic_CPD(R=R, factorization='cp')
+            print(len(training_supset))
+            print(sup_vals + sup_vals_other)
+
+            if R == 0:
+                model = Basic(channels=[64,128,256,512])
+            else:
+                model = Basic_CPD(R=R, factorization='cp')
+
             model = nn.DataParallel(model, device_ids=device_ids).to(device)
             mses = []
             current_pams = count_parameters(model)
