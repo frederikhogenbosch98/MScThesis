@@ -150,11 +150,11 @@ if __name__ == "__main__":
             un_vals_other = 190000 - un_vals 
             sup_vals = int(r*200000)
             sup_vals_other = int(18192 + 200000 - sup_vals)
+            print(len(training_supset))
+            print(sup_vals + sup_vals_other)
             trainset_un, testset_un, valset_un, _ = torch.utils.data.random_split(combined_unsupervised_train, [un_vals, 25000, 17077, un_vals_other])
             trainset_sup, _ = torch.utils.data.random_split(training_supset, [sup_vals, sup_vals_other])
 
-            print(len(training_supset))
-            print(sup_vals + sup_vals_other)
 
             if R == 0:
                 model = Basic(channels=[64,128,256,512])
