@@ -461,13 +461,14 @@ def train_classifier(classifier,
         if SAVE_MODEL_CLASSIFIER:
             save_folder = f'{run_dir}/CLASSIFIER_RUN_{fact}_R{R}_{now.day}_{now.month}_{now.hour}_{now.minute}.pth'
             torch.save(classifier.state_dict(), save_folder)
+            torch.save(classifier.state_dict(), 'trained_models/last_class.pth')
             print(f'classifier model saved to {save_folder}')
 
         print("\n")
 
     else:
         print('classifier model loaded')
-        classifier.load_state_dict(torch.load('trained_models/'))
+        classifier.load_state_dict(torch.load('trained_models/last_class.pth'))
         losses = np.zeros(num_epochs)
         val_losses = np.zeros(num_epochs)
 
