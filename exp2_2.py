@@ -124,6 +124,9 @@ if __name__ == "__main__":
 
     training_supset = trainset_sup
 
+    total_unsupervised = len(combined_unsupervised_train)
+    total_supervised = len(training_supset)
+
     # MAE
     num_warmup_epochs_mae = args.warmup_epochs_mae
     num_epochs_mae = args.epochs_mae + num_warmup_epochs_mae
@@ -144,18 +147,43 @@ if __name__ == "__main__":
     os.makedirs(f'{run_dir}/', exist_ok=True)
     for i, R in enumerate(R_LIST):
         print(f'R: {R}')
+        # for r in ratios:
+        #     print(f'ratio: {r}')
+        #     un_vals = int(r*190000)
+        #     un_vals_other = 190000 - un_vals 
+        #     sup_vals = int(r*200000)
+        #     sup_vals_other = int(18192 + 200000 - sup_vals)
+        #     print(len(training_supset))
+        #     print(sup_vals + sup_vals_other)
+        #     trainset_un, testset_un, valset_un, _ = torch.utils.data.random_split(combined_unsupervised_train, [un_vals, 25000, 17077, un_vals_other])
+        #     trainset_sup, _ = torch.utils.data.random_split(training_supset, [sup_vals, sup_vals_other])
         for r in ratios:
             print(f'ratio: {r}')
-            un_vals = int(r*190000)
-            un_vals_other = 190000 - un_vals 
-            sup_vals = int(r*200000)
-            sup_vals_other = int(18192 + 200000 - sup_vals)
-            print(len(training_supset))
-            print(sup_vals + sup_vals_other)
-            trainset_un, testset_un, valset_un, _ = torch.utils.data.random_split(combined_unsupervised_train, [un_vals, 25000, 17077, un_vals_other])
-            trainset_sup, _ = torch.utils.data.random_split(training_supset, [sup_vals, sup_vals_other])
-
-
+            
+            # Unsupervised dataset splitting
+            un_train = int(r * total_unsupervised)
+            un_test = int((1 - r) * 0.6 * total_unsupervised)
+            un_val = int((1 - r) * 0.3 * total_unsupervised)
+            un_other = total_unsupervised - un_train - un_test - un_val
+            
+            # Supervised dataset splitting
+            sup_train = int(r * total_supervised)
+            sup_other = total_supervised - sup_train
+            
+            print(f"Total supervised samples: {total_supervised}")
+            print(f"Total unsupervised samples: {total_unsupervised}")
+            print(f"Supervised split: {sup_train} / {sup_other}")
+            print(f"Unsupervised split: {un_train} / {un_test} / {un_val} / {un_other}")
+            
+            trainset_un, testset_un, valset_un, remaining_un = torch.utils.data.random_split(
+                combined_unsupervised_train, 
+                [un_train, un_test, un_val, un_other]
+            )
+            
+            trainset_sup, remaining_sup = torch.utils.data.random_split(
+                training_supset, 
+                [sup_train, sup_other]
+            )
             if R == 0:
                 model = Basic(channels=[64,128,256,512])
             else:
